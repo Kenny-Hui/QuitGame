@@ -10,6 +10,8 @@ public class QuitGame implements ModInitializer {
     public static float rotAngle = 20.0F;
     public static String[] keywords = {"start", "menu", "play", "poison"};
 
+    public static boolean unlocked = false;
+
     @Override
     public void onInitialize() {
         LOGGER.info("[QuitGame] QuitGame loaded");

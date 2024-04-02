@@ -39,8 +39,6 @@ public class TitleScreenMixin extends Screen {
     public double startY = 0;
     @Unique
     private float unlockedAlpha = 0;
-    @Unique
-    private boolean unlocked = false;
     protected TitleScreenMixin(Text title) {
         super(title);
     }
@@ -67,11 +65,11 @@ public class TitleScreenMixin extends Screen {
     public void hideWidget(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         for(String keyword : QuitGame.keywords) {
             if(splash.startsWith(keyword)) {
-                unlocked = true;
+                QuitGame.unlocked = true;
             }
         }
 
-        if(unlocked) {
+        if(QuitGame.unlocked) {
             unlockedAlpha = MathHelper.clamp(unlockedAlpha + (delta / 20), 0.0F, 1.0F);
         }
 
@@ -85,7 +83,7 @@ public class TitleScreenMixin extends Screen {
                     }
                 }
 
-                ((ButtonWidget) element).visible = unlocked;
+                ((ButtonWidget) element).visible = QuitGame.unlocked;
                 ((ButtonWidget) element).setAlpha(unlockedAlpha);
             }
         }
