@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "quitgame",
+  "version": "${version}",
+
+  "name": "Quit Game",
+  "description": "Why play Minecraft when you can just not?",
+  "authors": [
+    "LX86"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "https://github.com/Kenny-Hui/QuitGame"
+  },
+
+  "license": "CC0",
+  "icon": "assets/quitgame/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "com.lx862.quitgame.QuitGame"
+    ]
+  },
+  "mixins": [
+    "quitgame.mixin.json"
+  ],
+
+  "depends": {
+    "minecraft": ">=1.20.4"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
