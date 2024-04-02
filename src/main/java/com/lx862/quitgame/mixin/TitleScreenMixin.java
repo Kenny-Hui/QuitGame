@@ -50,7 +50,7 @@ public class TitleScreenMixin extends Screen {
         if(splash == null) {
             SplashTextRenderer splashTextRenderer = MinecraftClient.getInstance().getSplashTextLoader().get();
             if(splashTextRenderer != null) {
-                splash = new NewEpicSplashText("It's tater time!"); //new NewEpicSplashText(((SplashTextRendererAccessorMixin)splashTextRenderer).getText());
+                splash = new NewEpicSplashText(((SplashTextRendererAccessorMixin)splashTextRenderer).getText());
             } else {
                 splash = new NewEpicSplashText("MISSINGNO");
             }
