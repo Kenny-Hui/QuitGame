@@ -1,7 +1,7 @@
 package com.lx862.quitgame.mixin;
 
-import com.lx862.quitgame.CharacterRenderer;
-import com.lx862.quitgame.NewEpicSplashText;
+import com.lx862.quitgame.ReorderableSplashText;
+import com.lx862.quitgame.SplashTextCharacter;
 import com.lx862.quitgame.QuitGame;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -31,7 +31,7 @@ public class TitleScreenMixin extends Screen {
     @Shadow private boolean doBackgroundFade;
     @Shadow private long backgroundFadeStart;
     @Unique
-    private static NewEpicSplashText splash;
+    private static ReorderableSplashText splash;
     @Unique
     private double mouseX;
     @Unique
@@ -49,15 +49,15 @@ public class TitleScreenMixin extends Screen {
         if(splash == null) {
             SplashTextRenderer splashTextRenderer = MinecraftClient.getInstance().getSplashTextLoader().get();
             if(splashTextRenderer != null) {
-                splash = new NewEpicSplashText(((SplashTextRendererAccessorMixin)splashTextRenderer).getText());
+                splash = new ReorderableSplashText(((SplashTextRendererAccessorMixin)splashTextRenderer).getText());
             } else {
-                splash = new NewEpicSplashText("MISSINGNO");
+                splash = new ReorderableSplashText("MISSINGNO");
             }
         }
         startX = (width / 2.0F) + 123F;
         startY = 78;
-        for(CharacterRenderer characterRenderer : new ArrayList<>(splash.chars)) {
-            characterRenderer.setStartPos(startX, startY);
+        for(SplashTextCharacter splashTextCharacter : new ArrayList<>(splash.chars)) {
+            splashTextCharacter.setStartPos(startX, startY);
         }
         positionCharacters(true);
     }
@@ -103,9 +103,9 @@ public class TitleScreenMixin extends Screen {
         context.getMatrices().push();
         context.getMatrices().translate(startX, startY, 0);
         context.getMatrices().scale(scale, scale, scale);
-        for(CharacterRenderer characterRenderer : new ArrayList<>(splash.chars)) {
+        for(SplashTextCharacter splashTextCharacter : new ArrayList<>(splash.chars)) {
             context.getMatrices().push();
-            characterRenderer.render(context, delta / 3f, (int)(alpha * 255) << 24, textRenderer);
+            splashTextCharacter.render(context, delta / 3f, (int)(alpha * 255) << 24, textRenderer);
             context.getMatrices().pop();
         }
 
@@ -124,21 +124,19 @@ public class TitleScreenMixin extends Screen {
         double xSoFar = 0 - ((strLength / 2) / QuitGame.scale);
         double ySoFar = (splash.chars.size() * (8 * (QuitGame.rotAngle / 90.0))) / 2;
 
-        for(CharacterRenderer characterRenderer : new ArrayList<>(splash.chars)) {
-            if(absolute) {
-                characterRenderer.setExactPos(xSoFar, ySoFar);
-            } else {
-                characterRenderer.setTargetPos(xSoFar, ySoFar);
-            }
-            xSoFar += textRenderer.getWidth(String.valueOf(characterRenderer.getChar()));
-            ySoFar -= (characterRenderer.width * 1.6) * (QuitGame.rotAngle / 90.0);
+        for(SplashTextCharacter splashTextCharacter : new ArrayList<>(splash.chars)) {
+            splashTextCharacter.setTargetPos(xSoFar, ySoFar);
+            if(absolute) splashTextCharacter.setRenderPos(xSoFar, ySoFar);
+
+            xSoFar += textRenderer.getWidth(String.valueOf(splashTextCharacter.getChar()));
+            ySoFar -= (splashTextCharacter.width * 1.6) * (QuitGame.rotAngle / 90.0);
         }
 
-        for(CharacterRenderer characterRenderer : new ArrayList<>(splash.chars)) {
-            if(characterRenderer.isDragging()) {
+        for(SplashTextCharacter splashTextCharacter : new ArrayList<>(splash.chars)) {
+            if(splashTextCharacter.isDragging()) {
                 int idx = getMouseCharIndex();
                 if(idx != -1) {
-                    splash.reorder(characterRenderer, idx);
+                    splash.reorder(splashTextCharacter, idx);
                 }
             }
         }
@@ -147,8 +145,8 @@ public class TitleScreenMixin extends Screen {
     @Unique
     private int getMouseCharIndex() {
         int i = 0;
-        for(CharacterRenderer characterRenderer : new ArrayList<>(splash.chars)) {
-            if(characterRenderer.hovered(mouseX, mouseY, true)) {
+        for(SplashTextCharacter splashTextCharacter : new ArrayList<>(splash.chars)) {
+            if(splashTextCharacter.hoveredXAxis(mouseX)) {
                 return i;
             }
             i++;
@@ -158,9 +156,9 @@ public class TitleScreenMixin extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for(CharacterRenderer characterRenderer : splash.chars) {
-            if(characterRenderer.hovered(mouseX, mouseY, false)) {
-                characterRenderer.dragged();
+        for(SplashTextCharacter splashTextCharacter : splash.chars) {
+            if(splashTextCharacter.hovered(mouseX, mouseY)) {
+                splashTextCharacter.dragged();
                 return super.mouseClicked(mouseX, mouseY, button);
             }
         }
@@ -169,8 +167,8 @@ public class TitleScreenMixin extends Screen {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        for(CharacterRenderer characterRenderer : splash.chars) {
-            characterRenderer.released();
+        for(SplashTextCharacter splashTextCharacter : splash.chars) {
+            splashTextCharacter.released();
         }
         return super.mouseReleased(mouseX, mouseY, button);
     }

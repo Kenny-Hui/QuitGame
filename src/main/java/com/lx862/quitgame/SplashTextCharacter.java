@@ -6,7 +6,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.RotationAxis;
 import org.joml.Vector2d;
 
-public class CharacterRenderer {
+public class SplashTextCharacter {
     private final char character;
     private Vector2d startPos;
     private Vector2d targetPos;
@@ -14,7 +14,7 @@ public class CharacterRenderer {
     public double width;
     private boolean dragging;
 
-    public CharacterRenderer(char character) {
+    public SplashTextCharacter(char character) {
         this.character = character;
         this.targetPos = new Vector2d(0, 0);
         this.renderedPos = new Vector2d(0, 0);
@@ -29,26 +29,28 @@ public class CharacterRenderer {
         this.startPos = new Vector2d(x, y);
     }
 
-    public void setExactPos(double x, double y) {
-        this.targetPos = new Vector2d(x, y);
-        this.renderedPos = new Vector2d(x, y);
-    }
-
     public void setTargetPos(double x, double y) {
         this.targetPos = new Vector2d(x, y);
     }
 
-    public boolean hovered(double mouseX, double mouseY, boolean ignoreY) {
-        double startX = (startPos.x) + (targetPos.x * QuitGame.scale);
-        double startY = (startPos.y) + ((targetPos.y - 1) * QuitGame.scale);
-        double endX = startX + ((width + 0.5) * QuitGame.scale);
-        double endY = startY + ((8 + 2) * QuitGame.scale);
+    public void setRenderPos(double x, double y) {
+        this.renderedPos = new Vector2d(x, y);
+    }
 
-        if(mouseX >= startX && mouseX <= endX && (ignoreY || mouseY >= startY && mouseY <= endY)) {
-            return true;
-        } else {
-            return false;
-        }
+    public boolean hovered(double mouseX, double mouseY) {
+        return hoveredXAxis(mouseX) && hoveredYAxis(mouseY);
+    }
+
+    public boolean hoveredXAxis(double mouseX) {
+        double startX = (startPos.x) + (targetPos.x * QuitGame.scale);
+        double endX = startX + ((width + 0.5) * QuitGame.scale);
+        return mouseX >= startX && mouseX <= endX;
+    }
+
+    public boolean hoveredYAxis(double mouseY) {
+        double startY = (startPos.y) + ((targetPos.y - 1) * QuitGame.scale);
+        double endY = startY + ((8 + 2) * QuitGame.scale);
+        return mouseY >= startY && mouseY <= endY;
     }
 
     public void render(DrawContext drawContext, double deltaTime, int alpha, TextRenderer textRenderer) {

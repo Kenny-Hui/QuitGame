@@ -3,18 +3,18 @@ package com.lx862.quitgame;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-public class NewEpicSplashText {
+public class ReorderableSplashText {
     public String text;
-    public LinkedList<CharacterRenderer> chars;
-    public NewEpicSplashText(String text) {
+    public LinkedList<SplashTextCharacter> chars;
+    public ReorderableSplashText(String text) {
         this.text = text;
         chars = new LinkedList<>();
         for(int i = 0; i < text.length(); i++) {
-            chars.add(new CharacterRenderer(text.charAt(i)));
+            chars.add(new SplashTextCharacter(text.charAt(i)));
         }
     }
 
-    public void reorder(CharacterRenderer object, int idx) {
+    public void reorder(SplashTextCharacter object, int idx) {
         int fromIndex = chars.indexOf(object);
         if(fromIndex == idx) return;
         if(idx < 0) return;
