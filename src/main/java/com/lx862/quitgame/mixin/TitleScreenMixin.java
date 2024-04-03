@@ -40,8 +40,6 @@ public class TitleScreenMixin extends Screen {
     public double startX = 0;
     @Unique
     public double startY = 0;
-    @Unique
-    private float unlockedAlpha = 0;
     protected TitleScreenMixin(Text title) {
         super(title);
     }
@@ -73,7 +71,7 @@ public class TitleScreenMixin extends Screen {
         }
 
         if(QuitGame.unlocked) {
-            unlockedAlpha = MathHelper.clamp(unlockedAlpha + (delta / 20), 0.0F, 1.0F);
+            QuitGame.unlockedAlpha = MathHelper.clamp(QuitGame.unlockedAlpha + (delta / 20), 0.0F, 1.0F);
         }
 
         for(Element element : children()) {
@@ -87,7 +85,7 @@ public class TitleScreenMixin extends Screen {
                 }
 
                 ((ButtonWidget) element).visible = QuitGame.unlocked;
-                ((ButtonWidget) element).setAlpha(unlockedAlpha);
+                ((ButtonWidget) element).setAlpha(QuitGame.unlockedAlpha);
             }
         }
     }

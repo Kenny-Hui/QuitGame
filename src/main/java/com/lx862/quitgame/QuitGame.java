@@ -11,6 +11,7 @@ public class QuitGame implements ModInitializer {
     public static String[] keywords = {"start", "menu", "play", "poison"};
 
     public static boolean unlocked = false;
+    public static float unlockedAlpha = 0;
 
     @Override
     public void onInitialize() {
