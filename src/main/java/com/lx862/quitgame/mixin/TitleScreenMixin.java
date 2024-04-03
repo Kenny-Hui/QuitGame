@@ -135,7 +135,7 @@ public class TitleScreenMixin extends Screen {
         }
 
         for(CharacterRenderer characterRenderer : new ArrayList<>(splash.chars)) {
-            if(characterRenderer.dragging) {
+            if(characterRenderer.isDragging()) {
                 int idx = getMouseCharIndex();
                 if(idx != -1) {
                     splash.reorder(characterRenderer, idx);
@@ -159,7 +159,10 @@ public class TitleScreenMixin extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         for(CharacterRenderer characterRenderer : splash.chars) {
-            characterRenderer.mouseClicked(mouseX, mouseY);
+            if(characterRenderer.hovered(mouseX, mouseY, false)) {
+                characterRenderer.dragged();
+                return super.mouseClicked(mouseX, mouseY, button);
+            }
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -167,7 +170,7 @@ public class TitleScreenMixin extends Screen {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         for(CharacterRenderer characterRenderer : splash.chars) {
-            characterRenderer.mouseReleased(mouseX, mouseY);
+            characterRenderer.released();
         }
         return super.mouseReleased(mouseX, mouseY, button);
     }

@@ -12,7 +12,7 @@ public class CharacterRenderer {
     private Vector2d targetPos;
     private Vector2d renderedPos;
     public double width;
-    public boolean dragging;
+    private boolean dragging;
 
     public CharacterRenderer(char character) {
         this.character = character;
@@ -70,13 +70,15 @@ public class CharacterRenderer {
         drawContext.drawBorder((int)startX, (int)startY, (int)endX, (int)endY, 0xFFFFFFFF);
     }
 
-    public void mouseClicked(double mouseX, double mouseY) {
-        if(hovered(mouseX, mouseY, false)) {
-            dragging = true;
-        }
+    public void dragged() {
+        dragging = true;
     }
 
-    public void mouseReleased(double mouseX, double mouseY) {
+    public boolean isDragging() {
+        return dragging;
+    }
+
+    public void released() {
         dragging = false;
     }
 }
