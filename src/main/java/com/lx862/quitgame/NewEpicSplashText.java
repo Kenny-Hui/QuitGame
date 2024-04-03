@@ -20,12 +20,15 @@ public class NewEpicSplashText {
         if(idx < 0) return;
 
         boolean forward = idx > fromIndex;
+        chars.remove(fromIndex);
+
         if(forward) {
-            if(idx+1 > chars.size()-1) return;
-            chars.remove(fromIndex);
-            chars.add(idx+1, object);
+            if(idx+1 > chars.size()) {
+                chars.add(object);
+            } else {
+                chars.add(idx+1, object);
+            }
         } else {
-            chars.remove(fromIndex);
             chars.add(idx, object);
         }
     }
