@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Quit Game",
-  "description": "Why play Minecraft when you can just not?",
+  "description": "Give you choice to re-evaluate whether to play Minecraft or not",
   "authors": [
     "LX86"
   ],

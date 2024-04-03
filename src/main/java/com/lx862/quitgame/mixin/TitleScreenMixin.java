@@ -71,7 +71,7 @@ public class TitleScreenMixin extends Screen {
         }
 
         if(QuitGame.unlocked) {
-            QuitGame.unlockedAlpha = MathHelper.clamp(QuitGame.unlockedAlpha + (delta / 20), 0.0F, 1.0F);
+            QuitGame.unlockedAlpha = MathHelper.clamp(QuitGame.unlockedAlpha + (delta / 20F), 0.0F, 1.0F);
         }
 
         for(Element element : children()) {
@@ -94,7 +94,7 @@ public class TitleScreenMixin extends Screen {
     @Inject(method = "render", at = @At("TAIL"))
     public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        float alpha = this.doBackgroundFade ? (float)(Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 2000.0F : 1.0F;
+        float alpha = this.doBackgroundFade ? MathHelper.clamp((float)(Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 2000.0F, 0, 1) : 1.0F;
         QuitGame.scale = 1.8F * 100.0F / (float)(textRenderer.getWidth(splash.text) + 32);
 
         float scale = (float)QuitGame.scale - MathHelper.abs(MathHelper.sin((float)(Util.getMeasuringTimeMs() % 1000L) / 1000.0F * 6.2831855F) * (0.1F * ((float)QuitGame.scale / 1.8F)));

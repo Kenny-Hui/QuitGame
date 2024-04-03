@@ -79,7 +79,6 @@ publishing {
 			maven {
 				url = "https://minecraft.guntram.de/maven/"
 			}
-			maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 		}
 	}
 }

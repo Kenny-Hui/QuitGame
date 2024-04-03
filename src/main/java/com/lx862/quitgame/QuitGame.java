@@ -9,7 +9,6 @@ public class QuitGame implements ModInitializer {
     public static double scale = 1.8;
     public static float rotAngle = 20.0F;
     public static String[] keywords = {"init", "start", "menu", "play", "poison"};
-
     public static boolean unlocked = false;
     public static float unlockedAlpha = 0;
 
