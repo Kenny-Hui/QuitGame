@@ -18,6 +18,7 @@ import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin extends Screen {
+    @Shadow private boolean doBackgroundFade;
+    @Shadow private long backgroundFadeStart;
     @Unique
     private static NewEpicSplashText splash;
     @Unique
@@ -93,6 +96,7 @@ public class TitleScreenMixin extends Screen {
     @Inject(method = "render", at = @At("TAIL"))
     public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        float alpha = this.doBackgroundFade ? (float)(Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 2000.0F : 1.0F;
         QuitGame.scale = 1.8F * 100.0F / (float)(textRenderer.getWidth(splash.text) + 32);
 
         float scale = (float)QuitGame.scale - MathHelper.abs(MathHelper.sin((float)(Util.getMeasuringTimeMs() % 1000L) / 1000.0F * 6.2831855F) * (0.1F * ((float)QuitGame.scale / 1.8F)));
@@ -103,7 +107,7 @@ public class TitleScreenMixin extends Screen {
         context.getMatrices().scale(scale, scale, scale);
         for(CharacterRenderer characterRenderer : new ArrayList<>(splash.chars)) {
             context.getMatrices().push();
-            characterRenderer.render(context, delta / 3f, 255 << 24, textRenderer);
+            characterRenderer.render(context, delta / 3f, (int)(alpha * 255) << 24, textRenderer);
             context.getMatrices().pop();
         }
 
