@@ -8,20 +8,22 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Config {
-    public static File configFile = FabricLoader.getInstance().getConfigDir().resolve("quitgame").resolve("config.json").toFile();
+    public static Path configFile = FabricLoader.getInstance().getConfigDir().resolve("quitgame").resolve("config.json");
 
     public static void load() {
-        configFile.getParentFile().mkdirs();
+        try {
+            Files.createDirectories(configFile.getParent());
 
-        if(!configFile.exists()) {
-            QuitGame.LOGGER.info("[QuitGame] Config not found, generating one...");
-            write();
-            load();
-        } else {
-            try {
-                JsonElement jsonElement = JsonParser.parseReader(new FileReader(configFile));
+            if(!Files.exists(configFile)) {
+                QuitGame.LOGGER.info("[QuitGame] Config not found, generating one...");
+                write();
+                load();
+            } else {
+                JsonElement jsonElement = JsonParser.parseReader(new FileReader(configFile.toFile()));
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
 
                 if(jsonObject.get("alwaysUnlock").getAsBoolean()) {
@@ -32,9 +34,9 @@ public class Config {
                 for(int i = 0; i < keywords.size(); i++) {
                     QuitGame.keywords.add(keywords.get(i).getAsString());
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            QuitGame.LOGGER.error("", e);
         }
     }
 
@@ -50,11 +52,11 @@ public class Config {
         keywords.add("poison");
         jsonObject.add("keywords", keywords);
 
-        try (Writer writer = new FileWriter(configFile)) {
+        try (Writer writer = new FileWriter(configFile.toFile())) {
             Gson gson = new GsonBuilder().create();
             gson.toJson(jsonObject, writer);
         } catch (Exception e) {
-            e.printStackTrace();
+            QuitGame.LOGGER.error("", e);
         }
     }
 }

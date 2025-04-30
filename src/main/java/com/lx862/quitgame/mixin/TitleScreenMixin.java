@@ -55,7 +55,7 @@ public class TitleScreenMixin extends Screen {
             }
         }
         startX = (width / 2.0F) + 123F;
-        startY = 78;
+        startY = 70;
         for(SplashTextCharacter splashTextCharacter : new ArrayList<>(splash.chars)) {
             splashTextCharacter.setStartPos(startX, startY);
         }
@@ -93,7 +93,6 @@ public class TitleScreenMixin extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         float alpha = this.doBackgroundFade ? MathHelper.clamp((float)(Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 2000.0F, 0, 1) : 1.0F;
         QuitGame.scale = 1.8F * 100.0F / (float)(textRenderer.getWidth(splash.text) + 32);
 
@@ -116,8 +115,8 @@ public class TitleScreenMixin extends Screen {
 //        }
     }
 
+    @Unique
     public void positionCharacters(boolean absolute) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         QuitGame.scale = 1.8F * (100.0F / (float)(textRenderer.getWidth(splash.text) + 32));
 
         double strLength = textRenderer.getWidth(splash.text) * QuitGame.scale;
@@ -128,7 +127,7 @@ public class TitleScreenMixin extends Screen {
             splashTextCharacter.setTargetPos(xSoFar, ySoFar);
             if(absolute) splashTextCharacter.setRenderPos(xSoFar, ySoFar);
 
-            xSoFar += textRenderer.getWidth(String.valueOf(splashTextCharacter.getChar()));
+            xSoFar += textRenderer.getTextHandler().getWidth(String.valueOf(splashTextCharacter.getChar()));
             ySoFar -= (splashTextCharacter.width * 1.6) * (QuitGame.rotAngle / 90.0);
         }
 

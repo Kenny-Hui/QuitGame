@@ -2,14 +2,13 @@
   "schemaVersion": 1,
   "id": "quitgame",
   "version": "${version}",
-
   "name": "Quit Game",
   "description": "Give you choice to re-evaluate whether to play Minecraft or not",
   "authors": [
     "LX86"
   ],
   "contact": {
-    "homepage": "",
+    "homepage": "https://github.com/Kenny-Hui/QuitGame",
     "sources": "https://github.com/Kenny-Hui/QuitGame"
   },
 
@@ -25,11 +24,7 @@
   "mixins": [
     "quitgame.mixin.json"
   ],
-
   "depends": {
-    "minecraft": ">=1.20.4"
-  },
-  "suggests": {
-    "another-mod": "*"
+    "minecraft": ">=1.21.5"
   }
 }
