@@ -4,7 +4,6 @@ import com.lx862.quitgame.ReorderableSplashText;
 import com.lx862.quitgame.SplashTextCharacter;
 import com.lx862.quitgame.QuitGame;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
@@ -37,9 +36,9 @@ public class TitleScreenMixin extends Screen {
     @Unique
     private double mouseY;
     @Unique
-    public double startX = 0;
+    public float startX = 0;
     @Unique
-    public double startY = 0;
+    public float startY = 0;
     protected TitleScreenMixin(Text title) {
         super(title);
     }
@@ -55,7 +54,7 @@ public class TitleScreenMixin extends Screen {
             }
         }
         startX = (width / 2.0F) + 123F;
-        startY = 70;
+        startY = 55;
         for(SplashTextCharacter splashTextCharacter : new ArrayList<>(splash.chars)) {
             splashTextCharacter.setStartPos(startX, startY);
         }
@@ -93,22 +92,21 @@ public class TitleScreenMixin extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        float alpha = this.doBackgroundFade ? MathHelper.clamp((float)(Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 2000.0F, 0, 1) : 1.0F;
         QuitGame.scale = 1.8F * 100.0F / (float)(textRenderer.getWidth(splash.text) + 32);
 
         float scale = (float)QuitGame.scale - MathHelper.abs(MathHelper.sin((float)(Util.getMeasuringTimeMs() % 1000L) / 1000.0F * 6.2831855F) * (0.1F * ((float)QuitGame.scale / 1.8F)));
         positionCharacters(false);
 
-        context.getMatrices().push();
-        context.getMatrices().translate(startX, startY, 0);
-        context.getMatrices().scale(scale, scale, scale);
+        context.getMatrices().pushMatrix();
+        context.getMatrices().translate(startX, startY);
+        context.getMatrices().scale(scale, scale);
         for(SplashTextCharacter splashTextCharacter : new ArrayList<>(splash.chars)) {
-            context.getMatrices().push();
-            splashTextCharacter.render(context, delta / 3f, (int)(alpha * 255) << 24, textRenderer);
-            context.getMatrices().pop();
+            context.getMatrices().pushMatrix();
+            splashTextCharacter.render(context, delta / 3f, getAlpha(), textRenderer);
+            context.getMatrices().popMatrix();
         }
 
-        context.getMatrices().pop();
+        context.getMatrices().popMatrix();
 //
 //        for(CharacterRenderer characterRenderer : new ArrayList<>(QuitGame.splash.chars)) {
 //            characterRenderer.renderBoundary(context, delta / 3f, textRenderer);
@@ -124,8 +122,8 @@ public class TitleScreenMixin extends Screen {
         double ySoFar = (splash.chars.size() * (8 * (QuitGame.rotAngle / 90.0))) / 2;
 
         for(SplashTextCharacter splashTextCharacter : new ArrayList<>(splash.chars)) {
-            splashTextCharacter.setTargetPos(xSoFar, ySoFar);
-            if(absolute) splashTextCharacter.setRenderPos(xSoFar, ySoFar);
+            splashTextCharacter.setTargetPos((float)xSoFar, (float)ySoFar);
+            if(absolute) splashTextCharacter.setRenderPos((float)xSoFar, (float)ySoFar);
 
             xSoFar += textRenderer.getTextHandler().getWidth(String.valueOf(splashTextCharacter.getChar()));
             ySoFar -= (splashTextCharacter.width * 1.6) * (QuitGame.rotAngle / 90.0);
@@ -177,5 +175,20 @@ public class TitleScreenMixin extends Screen {
         this.mouseX = mouseX;
         this.mouseY = mouseY;
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+
+    @Unique
+    private float getAlpha() {
+        float a = 1.0F;
+        if (this.doBackgroundFade) {
+            float g = (float)(Util.getMeasuringTimeMs() - this.backgroundFadeStart) / 2000.0F;
+            if (g > 1.0F) {
+                this.doBackgroundFade = false;
+            } else {
+                g = MathHelper.clamp(g, 0.0F, 1.0F);
+                a = MathHelper.clampedMap(g, 0.5F, 1.0F, 0.0F, 1.0F);
+            }
+        }
+        return a;
     }
 }

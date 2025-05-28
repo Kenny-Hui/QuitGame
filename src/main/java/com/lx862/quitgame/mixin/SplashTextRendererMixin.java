@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SplashTextRenderer.class)
 public class SplashTextRendererMixin {
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void render(DrawContext context, int screenWidth, TextRenderer textRenderer, int alpha, CallbackInfo ci) {
+    public void render(DrawContext context, int screenWidth, TextRenderer textRenderer, float alpha, CallbackInfo ci) {
         ci.cancel();
     }
 }
